@@ -1,6 +1,4 @@
 varying vec2 vUv;
-// varying vec2 vCoordinates;
-attribute vec3 aCoordinates;
 
 void main() {
 	vUv = uv;

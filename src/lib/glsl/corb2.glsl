@@ -1,8 +1,5 @@
 precision highp float;
 
-// #define PI 3.141592653589793238;
-// #define TAU 6.283185307179586476
-
 uniform float time;
 uniform float progress;
 uniform float glow;
@@ -148,21 +145,8 @@ void main() {
 		vec3 mc_black = texture2D(matcap_black, matcapUV).rgb;
 		color = mc_black;
 		vec3 mc_lime = texture2D(matcap_lime, matcapUV).rgb;
-		color += (mc_lime * glow) * mc_blast;
-		
-		// if(activeMatcap){
-		// 	color = activeMatcap;
-		// }
-
-
-		// vec2 uv = position * 2.0 - 1.0;
-		// vec2 uv2 = uv * uv;
-		// float r = sqrt(uv2.x + uv2.y);
-
-
-		
+		color += (mc_lime * glow) * mc_blast;		
 	}
 	
-	// gl_FragColor = vec4(vUv, 0.0, 1.0);
 	gl_FragColor = vec4(color, 1.0);
 }
