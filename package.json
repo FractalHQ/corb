@@ -26,6 +26,8 @@
 		"autoprefixer": "^10.4.2",
 		"cssnano": "^5.0.15",
 		"fractils": "^1.0.16",
+		"glslCanvas": "^0.1.7",
+		"glslEditor": "^0.0.22",
 		"greset": "^1.0.0",
 		"mdsvex": "^0.9.8",
 		"postcss": "^8.4.5",
