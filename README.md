@@ -1,4 +1,4 @@
-# [glsl](https://github.com/fractalhq/glsl)
+# [corb](https://github.com/fractalhq/corb)
 
 Minimal Sveltekit Starter Template.
 
@@ -7,7 +7,7 @@ Minimal Sveltekit Starter Template.
 download
 
 ```bash
-npx degit fractalhq/glsl app
+npx degit fractalhq/corb app
 ```
 
 launch
@@ -31,4 +31,4 @@ features
 -   [Dark Theme](https://github.com/fractalhq/#ThemeToggle)
 -   [Fractils](https://github.com/fractalhq/fractils)
 -   [Greset](https://github.com/ghostdevv/greset)
--   [Local](https://github.com/FractalHQ/glsl/tree/main/static/fonts) Font [Setup](https://github.com/FractalHQ/glsl/blob/main/src/styles/app.scss#L4-L24)
+-   [Local](https://github.com/FractalHQ/corb/tree/main/static/fonts) Font [Setup](https://github.com/FractalHQ/corb/blob/main/src/styles/app.scss#L4-L24)

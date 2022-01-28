@@ -1,6 +1,6 @@
 {
-    "name": "glsl",
-    "short_name": "glsl",
+    "name": "corb",
+    "short_name": "corb",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

@@ -14,7 +14,7 @@
 <template lang="pug">
 
 	svelte:head
-		title {pageTitle($page.url.pathname)} · glsl
+		title {pageTitle($page.url.pathname)} · corb
 
 	fractils
 
