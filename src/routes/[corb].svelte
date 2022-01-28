@@ -200,6 +200,10 @@
 
 <svelte:window on:mousemove={mouseMove} bind:innerHeight={height} bind:innerWidth={width} />
 
+<svelte:head>
+	<title>ᑢᓍᖇᗷ</title>
+</svelte:head>
+
 <nav>
 	{#each ['#000', '#033'] as background, i}
 		<div class="dot" style:background on:click={() => (window.location.href = `/${i + 1}`)} />
