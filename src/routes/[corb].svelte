@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
 	export const load: Load = ({ params }) => {
-		console.log(params.corb)
 		return {
 			props: {
 				corb: params.corb
@@ -47,7 +46,6 @@
 	let shaders = [corb1, corb2]
 	export let corb = '0'
 	let activeShader = shaders[parseInt(corb) - 1]
-	console.log({ activeShader })
 
 	// Matcaps.
 	let matcaps
@@ -62,8 +60,9 @@
 		}
 		activeMatcap = matcaps.black
 		const scene = new THREE.Scene()
-		renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
-		renderer.setPixelRatio(window.devicePixelRatio)
+		renderer = new THREE.WebGLRenderer({ canvas, antialias: true, precision: 'highp' })
+		// renderer.setPixelRatio(window.devicePixelRatio)
+		renderer.setPixelRatio(2)
 		renderer.setSize(window.innerWidth, window.innerHeight)
 		renderer.setClearColor(0xeeeeee, 0)
 		renderer.physicallyCorrectLights = true
@@ -147,8 +146,8 @@
 
 			material.uniforms.resolution.value.x = width
 			material.uniforms.resolution.value.y = height
-			material.uniforms.resolution.value.z = a1 * 1.75
-			material.uniforms.resolution.value.w = a2 * 1.75
+			material.uniforms.resolution.value.z = a1 * 2
+			material.uniforms.resolution.value.w = a2 * 2
 
 			camera.updateProjectionMatrix()
 		}
@@ -192,10 +191,6 @@
 	const mouseMove = (e: MouseEvent) => {
 		mouse = { x: e.clientX, y: e.clientY }
 	}
-
-	const loadCorb = (i: number) => {
-		goto('/' + (i + 1))
-	}
 </script>
 
 <svelte:window on:mousemove={mouseMove} bind:innerHeight={height} bind:innerWidth={width} />
@@ -205,7 +200,7 @@
 </svelte:head>
 
 <nav>
-	{#each ['#000', '#033'] as background, i}
+	{#each ['#033', '#000'] as background, i}
 		<div class="dot" style:background on:click={() => (window.location.href = `/${i + 1}`)} />
 	{/each}
 </nav>
@@ -254,20 +249,25 @@
 	<canvas bind:this={canvas} />
 {/key}
 
-<h1>げイカ</h1>
+<h1 style="color: {corb == 1 ? 'white' : 'black'}">げイカ</h1>
 
 <style>
 	h1 {
-		font-size: 10vw;
 		position: absolute;
-		font-weight: bold;
-		letter-spacing: -1rem;
-		padding: 0rem;
-		opacity: 0.025;
 		bottom: 0;
 		right: 0;
 		left: 0;
-		transition: 0.5s;
+
+		padding: 0rem;
+
+		opacity: 0.025;
+
+		font-size: 5vw;
+		font-weight: bold;
+		letter-spacing: -1rem;
+
+		transition: 0.95s;
+		cursor: default;
 	}
 	h1:hover {
 		opacity: 1;
@@ -291,15 +291,19 @@
 		justify-content: space-between;
 		position: absolute;
 		right: 0rem;
-		max-width: 300px;
 		top: 1rem;
+
+		max-width: 300px;
+
 		opacity: 0.25;
+
 		transition: 0.5s;
 		transform: scale(0.3, 0.3);
 		transform-origin: right top;
 	}
 	controls:hover {
 		opacity: 1;
+
 		transform: scale(1);
 	}
 	controls:hover .control {
@@ -310,40 +314,60 @@
 		display: flex;
 		/* grid-template-columns: auto; */
 		flex-direction: column;
-		color: rgb(66, 84, 104);
-		text-align: center;
 		grid-gap: 0.5rem;
+
 		width: 200px;
+
+		color: rgb(66, 84, 104);
+
+		text-align: center;
 		font-family: monospace;
 	}
+
 	input {
 		filter: hue-rotate(-42deg) brightness(0.5) contrast(1.4);
+
 		margin: 0 auto;
 	}
+
 	label {
 		margin-bottom: -10px;
 	}
+
 	nav {
 		position: absolute;
 		display: flex;
 		gap: 1rem;
-		width: max-content;
 		right: 0;
+
+		width: max-content;
 		padding: 1rem;
 		margin: 1rem;
+
+		border: 1px solid #fff5;
+		background: #fff2;
 		border-radius: 20px;
 		opacity: 0.25;
+
 		transition: 0.25s;
+		box-sizing: border-box;
 	}
+
 	nav:hover {
-		background: white;
+		background: #fff5;
 		opacity: 1;
 	}
 
 	.dot {
 		width: 15px;
 		height: 15px;
+
 		border-radius: 100%;
+
 		cursor: pointer;
+		transition: 0.35s;
+	}
+	.dot:hover {
+		transform: scale(1.25);
 	}
 </style>
