@@ -2,7 +2,8 @@
 	import * as THREE from 'three'
 
 	import vertShader from '$lib/glsl/torus.vs?raw'
-	import fragShader from '$lib/glsl/torus.fs?raw'
+	// import fragShader from '$lib/glsl/torus.fs?raw'
+	import fragShader from '$lib/glsl/fragment.glsl?raw'
 	import { randInt } from '$lib/utils'
 
 	export class Shape {
