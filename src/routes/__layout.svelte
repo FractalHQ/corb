@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Fractils } from 'fractils'
 	import { page } from '$app/stores'
 	import 'greset/css/greset.css'
 	import '../styles/app.scss'
@@ -14,6 +15,8 @@
 
 	svelte:head
 		title {pageTitle($page.url.pathname)} · glsl
+
+	fractils
 
 	slot
 

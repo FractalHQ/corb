@@ -5,8 +5,14 @@ precision highp float;
 
 uniform float time;
 uniform float progress;
-uniform sampler2D matcap_black, matcap_burst;
+uniform float glow;
+uniform float metaGlue;
+uniform float sphereSize;
+uniform bool shrinkWhenFar;
+uniform float sphereInfluence;
+uniform sampler2D activeMatcap, matcap_black, matcap_burst, matcap_lime;
 uniform vec4 resolution;
+uniform vec2 mouse;
 varying vec2 vUv;
 float PI = 3.141592653589793238;
 
@@ -71,18 +77,25 @@ float sdBox( vec3 p, vec3 b ) {
 
 
 
-// Signed distance function.
+// Render geometry with a Signed Distance Function.
 float sdf(vec3 p) {
-	vec3 p1 = rotate(p, vec3(1.0), time/5.0);
-	float box = sdBox(p1, vec3(0.3));
-	float sphere = sdSphere(p,0.4);
-	return polynomialSmoothMin(box,sphere, 0.1);
+	vec2 position = gl_FragCoord.xy / resolution.xy;
+	vec2 center = vec2(0.5, 0.5);
+	vec3 rotatedPosition = rotate(p, vec3(1.0), time/5.0);
+	float box = sdBox(rotatedPosition, vec3(0.3));
+	vec3 mousePosition = vec3(mouse * resolution.zw * 2.0, 0.0);
+	float sphereSizeFinal = sphereSize;
+	if (shrinkWhenFar) {
+		sphereSizeFinal -= min(length(position-center), 0.9) * 0.33;
+	}
+	float sphere = sdSphere(p - mousePosition, sphereSizeFinal);
+	return polynomialSmoothMin(box,sphere, sphereInfluence);
 }
 
 // Calculate normals.
 vec3 calcNormal( in vec3 p ) // for function f(p)
 {
-	const float eps = 0.0001; // or some other value
+	const float eps = 0.00001; // or some other value
 	const vec2 h = vec2(eps,0);
 	return normalize( vec3(sdf(p+h.xyy) - sdf(p-h.xyy),
 						   sdf(p+h.yxy) - sdf(p-h.yxy),
@@ -94,9 +107,10 @@ void main() {
 	vec3 camPos = vec3(0.0, 0.0, 2.0);
 	vec3 ray = normalize(vec3((vUv - vec2(0.5)) * resolution.zw, -1));
 
+	// Cast a ray from the camera
 	vec3 rayPos = camPos;
 	float t = 0.0;
-	float tMax = 5.0;
+	float tMax = 10.0;
 	for(int i=0;i<256;++i) {
 		vec3 pos = camPos + t * ray;
 		float h = sdf(pos);
@@ -104,22 +118,48 @@ void main() {
 		t+=h;
 	}
 
-	vec3 color = vec3(0.0);
-	if(t<tMax) {	// we hit something
+
+	vec3 color = vec3(0.0235, 0.0353, 0.1412);
+	
+	/**
+		* Background
+	**/
+	vec2 position = gl_FragCoord.xy / resolution.xy;
+	vec3 background = vec3(1, 1.5, 1.5);
+	vec2 center = vec2(0.5, 0.5);
+	// Gradient towards center
+	background *= length(position - center);
+	color *= background;
+
+
+	if(t<tMax) {  // we hit something
 		vec3 pos = camPos + t * ray;
 		color = vec3(1.0);
 		vec3 normal = calcNormal(pos);
 		color = normal;
 		
-		// Mesh difference
+		// Combine the cube and sphere positions
 		float diff = dot(vec3(1.0),normal);
 		color = vec3(diff);
 
 		// matcap_black
 		vec2 matcapUV = getMatcap(ray, normal);
-		// vec3 mc_blast = texture2D(matcap_burst, matcapUV).rgb;
+		vec3 mc_blast = texture2D(matcap_burst, matcapUV).rgb;
 		vec3 mc_black = texture2D(matcap_black, matcapUV).rgb;
 		color = mc_black;
+		vec3 mc_lime = texture2D(matcap_lime, matcapUV).rgb;
+		color += (mc_lime * glow) * mc_blast;
+		
+		// if(activeMatcap){
+		// 	color = activeMatcap;
+		// }
+
+
+		// vec2 uv = position * 2.0 - 1.0;
+		// vec2 uv2 = uv * uv;
+		// float r = sqrt(uv2.x + uv2.y);
+
+
 		
 	}
 	
