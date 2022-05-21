@@ -13,14 +13,17 @@
 	// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 	// import { Shape } from '$lib/glsl/Shape.svelte'
 	import vertexShader from '$lib/glsl/vertex.glsl?raw'
+	import { onMount, tick } from 'svelte'
 	import corb1 from '$lib/glsl/corb1.glsl?raw'
 	import corb2 from '$lib/glsl/corb2.glsl?raw'
-	import * as THREE from 'three'
+	import { shader } from '$lib/stores/shader'
 	import { quintOut } from 'svelte/easing'
 	import { tweened } from 'svelte/motion'
-	import { onMount, onDestroy, tick } from 'svelte'
 	import { mapRange } from 'fractils'
-	import { goto } from '$app/navigation'
+
+	import * as THREE from 'three'
+
+	$shader = vertexShader
 
 	let canvas: HTMLCanvasElement
 	let _scene: THREE.Scene
@@ -174,6 +177,8 @@
 			material.uniforms.sphereSize.value = sphere.size
 			material.uniforms.sphereInfluence.value = sphere.influence
 			material.uniforms.shrinkWhenFar.value = sphere.shrinkWhenFar
+
+			material.fragmentShader = activeShader
 
 			renderer.render(scene, camera)
 			requestAnimationFrame(render)
