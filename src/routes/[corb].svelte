@@ -14,8 +14,7 @@
 	// import { Shape } from '$lib/glsl/Shape.svelte'
 	import vertexShader from '$lib/glsl/vertex.glsl?raw'
 	import { onMount, tick } from 'svelte'
-	import corb1 from '$lib/glsl/corb1.glsl?raw'
-	import corb2 from '$lib/glsl/corb2.glsl?raw'
+	import { corbs } from '$lib/glsl'
 	import { shader } from '$lib/stores/shader'
 	import { quintOut } from 'svelte/easing'
 	import { tweened } from 'svelte/motion'
@@ -46,9 +45,12 @@
 	let mouse = { x: 0.5, y: 0.5 }
 	let metaGlue = 5.75
 	let glow = 1
-	let shaders = [corb1, corb2]
 	export let corb = '0'
-	let activeShader = shaders[parseInt(corb) - 1]
+	let activeShader = corbs[parseInt(corb) - 1]
+	let zoom = 1.0
+	let _a = 1.0
+	let _b = 1.0
+	let _c = 1.0
 
 	// Matcaps.
 	let matcaps
@@ -123,7 +125,12 @@
 				matcap_lime: {
 					value: new THREE.TextureLoader().load('/assets/matcap_lime.png')
 				},
-				resolution: { value: new THREE.Vector4() }
+				resolution: { value: new THREE.Vector4() },
+				zoom: { value: zoom },
+				// Controls
+				_a: { value: _a },
+				_b: { value: _b },
+				_c: { value: _c }
 			},
 			vertexShader,
 			fragmentShader: activeShader,
@@ -177,6 +184,10 @@
 			material.uniforms.sphereSize.value = sphere.size
 			material.uniforms.sphereInfluence.value = sphere.influence
 			material.uniforms.shrinkWhenFar.value = sphere.shrinkWhenFar
+			material.uniforms.zoom.value = zoom
+			material.uniforms._a.value = _a
+			material.uniforms._b.value = _b
+			material.uniforms._c.value = _c
 
 			material.fragmentShader = activeShader
 
@@ -209,7 +220,8 @@
 		<div class="dot" style:background on:click={() => (window.location.href = `/${i + 1}`)} />
 	{/each}
 </nav>
-<!-- <controls>
+
+<controls>
 	<div class="control">
 		<label for="yoink">yoink</label>
 		<input
@@ -248,7 +260,23 @@
 		<label for="saturation">saturation</label>
 		<input name="saturation" type="range" bind:value={glow} min="0.001" max="2" step="0.001" />
 	</div>
-</controls> -->
+	<div class="control">
+		<label for="_a">_a: {_a}</label>
+		<input name="_a" type="range" bind:value={_a} min="-10" max="10" step="0.001" />
+	</div>
+	<div class="control">
+		<label for="_b">_b: {_b}</label>
+		<input name="_b" type="range" bind:value={_b} min="-10" max="10" step="0.001" />
+	</div>
+	<div class="control">
+		<label for="_c">_c: {_c}</label>
+		<input name="_c" type="range" bind:value={_c} min="-10" max="10" step="0.001" />
+	</div>
+	<div class="control">
+		<label for="zoom">zoom: {zoom}</label>
+		<input name="zoom" type="range" bind:value={zoom} min="-10" max="10" step="0.001" />
+	</div>
+</controls>
 
 {#key activeShader}
 	<canvas bind:this={canvas} />
